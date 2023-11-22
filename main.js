@@ -1,12 +1,40 @@
 const assert = require('assert');
 
 function countBatteriesByHealth(presentCapacities) {
-  return {
+  let batteries = {
     healthy: 0,
     exchange: 0,
     failed: 0
   };
+
+  for (let capacity of presentCapacities) {
+    let batteryStatus = getBatteryStatus(getBatterySOH(capacity));
+    if (batteryStatus === 'healthy') {
+      batteries.healthy++;
+    } else if (batteryStatus === 'exchange') {
+      batteries.exchange++;
+    } else if (batteryStatus === 'failed') {
+      batteries.failed++;
+    }
+  }
+
+  return batteries;
 }
+
+function getBatteryStatus(capacity) {
+  if (capacity >= 80 && capacity <=100) {
+    return 'healthy';
+  } else if (capacity < 80 && capacity>=62) {
+    return 'exchange';
+  } else if(capacity < 62) {
+    return 'failed';
+  }
+}
+
+function getBatterySOH(currCapacity) {
+  return (currCapacity / 120) * 100;
+}
+
 
 function testBucketingByHealth() {
   console.log('Counting batteries by SoH...');
